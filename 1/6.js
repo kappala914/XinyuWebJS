@@ -49,8 +49,12 @@ for (var i = 0; i < buttons.length; i++) {
 obj.fn(); // 执行的是返回的小函数 */
 
 /* // 基于let这种方法也是‘闭包’方案
+// 浏览器在每一轮循环的时候，帮助我们形成的“闭包”
 var buttons = document.querySelectorAll('button');
 for (let i = 0; i < buttons.length; i++) {
+  // 父级“块级上下文”：控制循环
+  //    第一轮循环  私有的块级上下文EC(B1) i=0
+  //    -> 当前上下文中创建的一个小函数，被全局的按钮的click占用了，EC(B1)不会被释放，所以形成了“闭包”
   buttons[i].onclick = function () {
     console.log(`当前点击按钮的索引：${i}`);
   };
