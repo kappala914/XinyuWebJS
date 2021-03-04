@@ -136,7 +136,7 @@ console.log(getCss(body, 'height'));
 console.log(getCss(body, 'margin'));
 console.log(getCss(body, 'background')); */
 
-function getCss(element, attr) {
+/* function getCss(element, attr) {
   // 第一次执行，根据是否兼容，实现函数的重构
   if ('getComputedStyle' in window) {
     // 直接重构函数
@@ -155,4 +155,103 @@ function getCss(element, attr) {
 var body = document.body;
 console.log(getCss(body, 'height'));
 console.log(getCss(body, 'margin'));
-console.log(getCss(body, 'background'));
+console.log(getCss(body, 'background')); */
+
+// ==========================================================================
+/* 
+  函数柯理化：预先处理的思想[形成一个不被释放的闭包，把一些信息存储起来，以后基于作用域链，访问到实现存储的信息，然后进行相关的处理，所有符合这种模式(或者闭包应用的)都被称为柯理化函数]
+*/
+
+function currying(x) {
+  // x：预先存储的值
+  return function (...args) {
+    // 基于ES6剩余运算符获取传递的实参信息 -> 结果是个数组
+    // ....
+    // args.unshift(x);
+    // 数组求和
+    // 方法1 命令式编程：自己编写代码管控运行的步骤和逻辑，主要特点：怎么做，好处：自己可以灵活掌控执行步骤
+    /* var total = 0;
+    for (var i = 0; i < args.length; i++) {
+      total += args[i];
+    }
+    return total; */
+    // 方法2 函数式编程：具体实现的步骤，已经被封装成为方法，我们只需调用方法获取结果即可，无需关注怎么实现的，主要特点：关注结果，好处：用起来方便，代码量减少，弊端：自己无法灵活掌控执行步骤
+    /* var total = 0;
+    args.forEach((item) => {
+      total += item;
+    });
+    return total; */
+    // 方法3，eval()方法，将字符串转为JS表达式
+    /* var total = eval(args.join('+'));
+    return total; */
+    // 方法4，数组reduce()方法
+    return args.reduce((result, item) => result + item, x);
+  };
+}
+var sum = currying(10);
+console.log(sum(20)); // 10+20
+console.log(sum(20, 30)); // 10+20+30
+
+/* function currying(x) {
+  // x：预先存储的值
+  return function () {
+    // 利用函数内置的实参集合，结果是一个类数组，将其转化为数组
+    var args = Array.from(arguments); // 把类数组转化成数组 方法一
+    var args = [].slice.call(arguments); // 把类数组转化成数组 方法二
+  };
+}
+var sum = currying(10);
+console.log(sum(20)); // 10+20
+console.log(sum(20, 30)); // 10+20+30 */
+
+/* 
+  数组的reduce方法：在遍历数组的过程中，可以累积上一次处理的结果，基于上次处理的结果继续遍历处理
+    + 数组.reduce([callback],[initialValue]); // initialValue可以不传
+*/
+
+// var arr = [10, 20, 30, 40];
+/* var res = arr.reduce(function (result, item, index) {
+  // 若initialValue初始值不传递，result默认初始值是数组第一项，然后reduce是从数组第二项开始遍历
+  // 每遍历数组中的一项，回调函数会触发执行一次
+  //  + result 存储的是上一次回调函数返回的结果（除了第一次是初始值或者数组第一项）
+  //  + item 当前遍历这一项
+  //  + index 当前遍历这一项的索引
+  // console.log(item, index);
+  console.log(result);
+  return item + result;
+});
+console.log(res); */
+/* var res = arr.reduce((result, item) => {
+  // 若传递initialValue初始值，则result第一次的结果就是初始值，item从数组第一项开始遍历
+  console.log(result, item);
+  return result + item;
+}, 0);
+console.log(res);
+
+var arr = ['小', '石', '子', '石', '子', '石', '子', '石', '子'];
+var str = arr.reduce((result, item) => {
+  return `${result},${item}`;
+});
+console.log(str); */
+
+/* Array.prototype.reduce = function reduce(callback, initial) {
+  var self = this, // this->arr
+    i = 0;
+  if (typeof callback !== 'function') throw new TypeError('callback must be a function');
+  if (typeof initial === 'undefined') {
+    initial = self[0];
+    i = 1;
+  }
+
+  // 迭代数组每一项
+  for (; i < self.length; i++) {
+    var item = self[i],
+      index = i;
+    initial = callback(initial, item, index);
+  }
+  return initial;
+};
+var total = arr.reduce((result, item) => {
+  return result + item;
+});
+console.log(total); */
